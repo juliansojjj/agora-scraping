@@ -64,11 +64,20 @@ const main = async () => {
       const parser = new DOMParser();
       const doc = parser.parseFromString(article, 'text/html');
       
-      const contentArray = Array.from(doc.querySelectorAll('p, img, blockquote'))
+      const contentArray = Array.from(doc.querySelectorAll('p, img, blockquote, h2, h3'))
 
       const articleFormat = (array:Element[])=>{
         return array.map((element:Element)=>{
           console.log(element)
+          if (element.tagName === 'H2') {
+            const headingElement = element as HTMLHeadingElement
+            return {title:headingElement.innerText}
+          }
+          if (element.tagName === 'H3') {
+            const subheadingElement = element as HTMLHeadingElement
+            return {subtitle:subheadingElement.innerText}
+          }
+
           if (element.tagName === 'IMG') {
             const imgElement = element as HTMLImageElement;
             return {imageUrl:imgElement.src,
@@ -87,6 +96,7 @@ const main = async () => {
             return {
             quote:quoteElement.innerText,
           }}
+
         })
       }
 
@@ -98,7 +108,7 @@ const main = async () => {
         frontImageAlt:frontImageAlt,
         heading:heading,
         subheading:subheading,
-        date:`Timestamp.fromDate(new Date("${date}"))`,
+        date:`Timestamp.fromDate(new Date('${date}'))`,
         content:articleFormat(contentArray)
        };
     });
