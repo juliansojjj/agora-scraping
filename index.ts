@@ -26,7 +26,6 @@ const main = async () => {
     console.log(links)
     return links
       .filter((link) => link.href.split('/')[3] == 'article')
-      .slice(5,6) 
       .map((link) => link.href);
   });
   
@@ -141,25 +140,39 @@ const main = async () => {
         })
       }
 
+      function priority(){
+        return contentArray.length <= 20 ? 'low' : 'medium'
+      }
+
       return { 
         authorID:authorName.split(' ').join(''),
         authorName:authorName,
-        category:category.split('>')[1].trim(),
+
         frontImage:frontImage,
         frontImageAlt:frontImageAlt,
+        frontImageBanner: false,
+
         heading:heading,
         subheading:subheading,
-        urlTopics:urlTopics(),
-        topics:topics(),
+
+        category:'culture',
+        urlTopics:Array.from(new Set(urlTopics())),
+        topics:topics()?.filter((item,index:number)=>{
+          return index == topics().findIndex(obj=>item?.url == obj?.url)
+        }),
+
         date:`Timestamp.fromDate(new Date('${date}'))`,
-        content:articleFormatContent(contentArray)
+        priority:priority(),
+        available:true,
+        subscription:false,
+
+        content:articleFormatContent(contentArray),
+        contentPreview:contentArray.length <= 10 ? [] : articleFormatContent(contentArray.slice(0,10))
        };
     });
     articlesTopics.push(articleData.topics)
     articlesData.push({source:link, ...articleData });
   }
-  console.log(articlesTopics)
-  console.log(articlesData);
 
   const json = JSON.stringify({articlesTopics,articlesData})
   writeFile(`./export/...json`, json, 'utf8', (err) => {
