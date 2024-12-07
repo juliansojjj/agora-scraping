@@ -5,7 +5,8 @@ import AdblockerPlugin from 'puppeteer-extra-plugin-adblocker'
 import { link, writeFile } from 'fs';
 
 
-const url = '';
+
+
 
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
@@ -33,9 +34,9 @@ const main = async () => {
   const articlesTopics = [];
 
   for (const link of articleLinks) {
-    await delay(1000);
+    await delay(750);
     await page.goto(link);
-    await delay(2000);
+    await delay(1000);
     
     await page.waitForSelector('main section article');
     const articleTopics:{}[] = []
@@ -60,7 +61,7 @@ const main = async () => {
       .querySelector('section')
       .querySelector('div')
       .querySelector('div').
-      querySelector('img').src
+      querySelector('img')?.src
 
       const frontImageAlt = document.querySelector('main')
       .querySelector('section')
@@ -155,7 +156,7 @@ const main = async () => {
         heading:heading,
         subheading:subheading,
 
-        category:'culture',
+        category:'media',       //------------------------------------------------------------------------------------------
         urlTopics:Array.from(new Set(urlTopics())),
         topics:topics()?.filter((item,index:number)=>{
           return index == topics().findIndex(obj=>item?.url == obj?.url)
